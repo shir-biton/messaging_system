@@ -5,6 +5,7 @@ from models.user import User
 
 user_bp = Blueprint("user_bp", __name__)
 
+
 @user_bp.route("/api/v1/users", methods=["POST"])
 def create_user():
     data = request.get_json()
@@ -18,6 +19,9 @@ def create_user():
 
 @user_bp.route("/api/v1/users/login", methods=["POST"])
 def login():
+    """
+    Validates user credentials. Returns access and user details or an error message.
+    """
     data = request.get_json()
 
     if not data:
@@ -34,7 +38,7 @@ def login():
         return make_response(jsonify({"error": "Could not verify"}), 401)
 
     access_token = create_access_token(identity=str(user.id))
-    return make_response(jsonify(access_token=access_token), 200)
+    return make_response(jsonify(access_token=access_token, user=user), 200)
 
 @user_bp.route("/api/v1/users/me", methods=["GET"])
 @jwt_required
