@@ -1,6 +1,5 @@
 from flask import Blueprint, jsonify, make_response, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from bson.objectid import ObjectId
 
 from models.message import Message
 from models.user import User
@@ -15,7 +14,7 @@ def write_message():
     current_user = get_jwt_identity()
     
     try:
-        receiver = User.objects.get(id=ObjectId(data.get("receiver")))
+        receiver = User.objects.get(email=data.get("receiver"))
         message = Message(sender=current_user, receiver=receiver, subject=data.get("subject"), message=data.get("message"))
         message.save()
         return make_response(jsonify(message), 200)
