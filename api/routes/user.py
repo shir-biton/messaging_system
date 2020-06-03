@@ -1,5 +1,6 @@
+import datetime
 from flask import Blueprint, jsonify, make_response, request
-from flask_jwt_extended import jwt_required, create_access_token, get_jwt_identity
+from flask_jwt_extended import jwt_required, create_access_token
 
 from models.user import User
 
@@ -37,11 +38,11 @@ def login():
     except ValueError:
         return make_response(jsonify({"error": "Could not verify"}), 401)
 
-    access_token = create_access_token(identity=str(user.id))
+    access_token = create_access_token(identity=str(user.id), expires_delta=datetime.timedelta(days=1))
     return make_response(jsonify(access_token=access_token, user=user), 200)
 
-@user_bp.route("/api/v1/users/me", methods=["GET"])
-@jwt_required
-def get_user():
-    current_user = get_jwt_identity()
-    return make_response(jsonify(logged_in_as=current_user), 200)
+# @user_bp.route("/api/v1/users/me", methods=["GET"])
+# @jwt_required
+# def get_user():
+#     current_user = get_jwt_identity()
+#     return make_response(jsonify(logged_in_as=current_user), 200)

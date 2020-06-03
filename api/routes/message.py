@@ -1,4 +1,5 @@
 from flask import Blueprint, jsonify
+from flask_jwt_extended import jwt_required, get_jwt_identity()
 
 from models.message import Message
 
@@ -8,7 +9,8 @@ message_bp = Blueprint('message_bp', __name__)
 @message_bp.route("/api/v1/messages", methods=["POST"])
 @jwt_required
 def write_message():
-    pass
+    data = request.get_json()
+    message = Message(**data)
 
 @message_bp.route("/api/v1/messages", methods=["GET"])
 @jwt_required
