@@ -1,0 +1,24 @@
+from mongoengine import Document, StringField, EmailField
+from flask_bcrypt import generate_password_hash, check_password_hash
+
+class User(Document):
+    name = StringField(required=True)
+    email = EmailField(required=True, unique=True)
+    password = StringField(required=True, min_length=6)
+
+    meta = {'collection': 'users'}
+
+    def generate_pw_hash(self):
+        """
+        """
+        self.password = generate_password_hash(password=self.password).decode('utf-8')
+
+    def check_pw_hash(self, password: str) -> bool:
+        """
+        """
+        return check_password_hash(pw_hash=self.password, password=password)
+
+    def save(self, *args, **kwargs):
+        # Overwrite Document save method to generate password hash prior to saving
+        self.generate_pw_hash()
+        super(Users, self).save(*args, **kwargs)
