@@ -5,6 +5,7 @@ from flask_jwt_extended import JWTManager
 
 # local packages
 from api.routes.user import user_bp
+from api.routes.message import message_bp
 from models.user import User
 from models.message import Message
 
@@ -26,6 +27,7 @@ def get_flask_app(config: dict = None):
     """
     app = Flask(__name__)
     app.register_blueprint(user_bp)
+    app.register_blueprint(message_bp)
 
     # configure app
     config = default_config if config is None else config
