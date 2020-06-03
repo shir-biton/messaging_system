@@ -16,7 +16,7 @@ def create_user():
         user.save()
         return make_response(jsonify(user))
     except Exception as e:
-        return make_response(jsonify({"error": str(e)}))
+        return make_response(jsonify({"error": str(e)}), 500)
 
 @user_bp.route("/api/v1/users/login", methods=["POST"])
 def login():

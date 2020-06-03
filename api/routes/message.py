@@ -18,19 +18,31 @@ def write_message():
         receiver = User.objects.get(id=ObjectId(data.get("receiver")))
         message = Message(sender=current_user, receiver=receiver, subject=data.get("subject"), message=data.get("message"))
         message.save()
-        return make_response(jsonify(message))
+        return make_response(jsonify(message), 200)
     except Exception as e:
-        return make_response(jsonify({"error": str(e)}))
+        return make_response(jsonify({"error": str(e)}), 500)
 
 @message_bp.route("/api/v1/messages", methods=["GET"])
 @jwt_required
 def get_all_messages():
-    pass
+    current_user = get_jwt_identity()
+
+    try:
+        messages = Message.objects(receiver=current_user)
+        return make_response(jsonify(messages), 200)
+    except Exception as e:
+        return make_response(jsonify({"error": str(e)}), 500)
 
 @message_bp.route("/api/v1/messages/unread", methods=["GET"])
 @jwt_required
 def get_all_unread_messages():
-    pass
+    current_user = get_jwt_identity()
+
+    try:
+        messages = Message.objects(receiver=current_user, unread=True)
+        return make_response(jsonify(messages), 200)
+    except Exception as e:
+        return make_response(jsonify({"error": str(e)}), 500)
 
 @message_bp.route("/api/v1/messages/<id>", methods=["GET"])
 @jwt_required
