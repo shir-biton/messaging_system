@@ -1,4 +1,6 @@
+import datetime
 from mongoengine import Document, StringField, DateTimeField, BooleanField, ReferenceField
+
 from models.user import User
 
 class Message(Document):
@@ -6,7 +8,7 @@ class Message(Document):
     receiver = ReferenceField(User, required=True)
     message = StringField(required=True)
     subject = StringField(max_length=50)
-    creation_date = DateTimeField(required=True)
-    unread = BooleanField()
+    creation_date = DateTimeField(default=datetime.datetime.utcnow())
+    unread = BooleanField(default=True)
 
-    meta = {'collection': 'messages'}
+    meta = {"collection": "messages"}
