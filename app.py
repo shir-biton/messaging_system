@@ -4,8 +4,8 @@ from flask_mongoengine import MongoEngine
 from flask_jwt_extended import JWTManager
 
 # local packages
-from api.routes.user import user_bp
-from api.routes.message import message_bp
+from views.user import user_bp
+from views.message import message_bp
 from models.user import User
 from models.message import Message
 from config import default_config
