@@ -40,9 +40,3 @@ def login():
 
     access_token = create_access_token(identity=str(user.id), expires_delta=datetime.timedelta(days=1))
     return make_response(jsonify(access_token=access_token, user=user), 200)
-
-# @user_bp.route("/api/v1/users/me", methods=["GET"])
-# @jwt_required
-# def get_user():
-#     current_user = get_jwt_identity()
-#     return make_response(jsonify(logged_in_as=current_user), 200)
