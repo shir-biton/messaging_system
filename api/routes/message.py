@@ -49,12 +49,13 @@ def read_message_by_id(id):
     current_user = get_jwt_identity()
 
     try:
-        message = Message.objects.get(id=id, receiver=current_user)
+        message = Message.objects(id=id, receiver=current_user) or Message.objects(id=id, sender=current_user)
 
         if not message:
             return make_response(jsonify({"error": "Bad Request"}), 400)
 
-        Message.objects(id=id).update_one(unread=False)
+        message = message.first()
+        message.update(unread=False)
         message.reload()
 
         return make_response(jsonify(message), 200)
@@ -64,4 +65,17 @@ def read_message_by_id(id):
 @message_bp.route("/api/v1/messages/<id>", methods=["DELETE"])
 @jwt_required
 def delete_message_by_id(id):
-    pass
+    current_user = get_jwt_identity()
+
+    try:
+        message = Message.objects(id=id, receiver=current_user) or Message.objects(id=id, sender=current_user)
+
+        if not message:
+            return make_response(jsonify({"error": "Bad Request"}), 400)
+
+        message = message.first()
+        message.delete()
+
+        return make_response(jsonify(message), 200)
+    except Exception as e:
+        return make_response(jsonify({"error": str(e)}), 500)
