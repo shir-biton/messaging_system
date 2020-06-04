@@ -1,5 +1,5 @@
 # flask packages
-from flask import Flask, request, jsonify, make_response
+from flask import Flask, jsonify, make_response
 from flask_mongoengine import MongoEngine
 from flask_jwt_extended import JWTManager
 
@@ -8,16 +8,7 @@ from api.routes.user import user_bp
 from api.routes.message import message_bp
 from models.user import User
 from models.message import Message
-
-default_config = {
-    "JWT_SECRET_KEY": "messaging_app_secret",
-    "SECRET_KEY": "dsdsdf",
-    "MONGODB_SETTINGS": {
-        "db": "messaging_system",
-        "host": "localhost",
-        "port": 27017
-    }
-}
+from config import default_config
 
 def get_flask_app(config: dict = None):
     """
@@ -33,15 +24,17 @@ def get_flask_app(config: dict = None):
     config = default_config if config is None else config
     app.config.update(config)
 
+    jwt = JWTManager(app)
+    db = MongoEngine(app)
+
     return app
 
 app = get_flask_app()
-jwt = JWTManager(app)
-db = MongoEngine(app)
 
 @app.errorhandler(404)
 def not_found(error):
     return make_response(jsonify({"error": "Not found"}), 404)
+
 
 if __name__ == "__main__":
     app.run(debug=True)
