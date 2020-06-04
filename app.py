@@ -41,18 +41,7 @@ db = MongoEngine(app)
 
 @app.errorhandler(404)
 def not_found(error):
-    message = {
-        "error":
-            {
-                "msg": "Not found"
-            }
-    }
-
-    return make_response(jsonify(message), 404)
-
-@app.route("/")
-def hello_world():
-    return "Hello World"
+    return make_response(jsonify({"error": "Not found"}), 404)
 
 if __name__ == "__main__":
     app.run(debug=True)
