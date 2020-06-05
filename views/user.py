@@ -21,7 +21,7 @@ def create_user():
 @user_bp.route("/api/v1/users/login", methods=["POST"])
 def login():
     """
-    Validates user credentials. Returns access and user details or an error message.
+    Validates user credentials. Returns access token and user details or an error message.
     """
     data = request.get_json()
 

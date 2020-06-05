@@ -6,15 +6,13 @@ from flask_jwt_extended import JWTManager
 # local packages
 from views.user import user_bp
 from views.message import message_bp
-from models.user import User
-from models.message import Message
 from config import default_config
 
 def get_flask_app(config: dict = None):
     """
     Initializes Flask app with given configuration.
     :param config: Configuration dictionary
-    :return: app
+    :return: Flask app
     """
     app = Flask(__name__)
     app.register_blueprint(user_bp)
@@ -29,12 +27,7 @@ def get_flask_app(config: dict = None):
 
     return app
 
-app = get_flask_app()
-
-@app.errorhandler(404)
-def not_found(error):
-    return make_response(jsonify({"error": "Not found"}), 404)
-
 
 if __name__ == "__main__":
+    app = get_flask_app()
     app.run(debug=True)
