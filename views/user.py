@@ -28,17 +28,22 @@ def login():
     if not data:
         return make_response(jsonify({"error": "Missing JSON in request"}), 400)
 
-    user = User.objects.get(email=data.get("email"))
-    
-    if not user:
-        return make_response(jsonify({"error": "Could not verify"}), 401)
-    
     try:
-        user.check_pw_hash(data.get('password'))        
-    except ValueError:
-        return make_response(jsonify({"error": "Could not verify"}), 401)
+        user = User.objects(email=data.get("email"))
+        
+        if not user:
+            return make_response(jsonify({"error": "Could not verify"}), 401)
 
-    access_token = create_access_token(identity=str(user.id), expires_delta=datetime.timedelta(days=1))
-    refresh_token = create_refresh_token(identity=str(user.id))
+        user = user.first()
+        
+        try:
+            user.check_pw_hash(data.get('password'))        
+        except ValueError:
+            return make_response(jsonify({"error": "Could not verify"}), 401)
 
-    return make_response(jsonify(access_token=access_token, refresh_token=refresh_token, user=user), 200)
+        access_token = create_access_token(identity=str(user.id), expires_delta=datetime.timedelta(days=1))
+        refresh_token = create_refresh_token(identity=str(user.id))
+
+        return make_response(jsonify(access_token=access_token, refresh_token=refresh_token, user=user), 200)
+    except Exception as e:
+        return make_response(jsonify({"error": str(e)}), 500)
