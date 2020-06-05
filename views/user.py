@@ -1,6 +1,6 @@
 import datetime
 from flask import Blueprint, jsonify, make_response, request
-from flask_jwt_extended import jwt_required, create_access_token
+from flask_jwt_extended import jwt_required, create_access_token, create_refresh_token
 
 from models.user import User
 
@@ -39,4 +39,6 @@ def login():
         return make_response(jsonify({"error": "Could not verify"}), 401)
 
     access_token = create_access_token(identity=str(user.id), expires_delta=datetime.timedelta(days=1))
-    return make_response(jsonify(access_token=access_token, user=user), 200)
+    refresh_token = create_refresh_token(identity=str(user.id))
+
+    return make_response(jsonify(access_token=access_token, refresh_token=refresh_token, user=user), 200)
