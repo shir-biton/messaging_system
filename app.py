@@ -1,3 +1,5 @@
+import os
+
 # flask packages
 from flask import Flask, jsonify, make_response
 from flask_mongoengine import MongoEngine
@@ -18,11 +20,20 @@ def get_flask_app(config: dict = None):
     app.register_blueprint(user_bp)
     app.register_blueprint(message_bp)
 
-    # configure app
+    # Configure app
     config = default_config if config is None else config
     app.config.update(config)
 
+    if 'MONGODB_URI' in os.environ:
+        flask_app.config['MONGODB_SETTINGS'] = {'host': os.environ['MONGODB_URI'],
+                                                'retryWrites': False}
+    if 'JWT_SECRET_KEY' in os.environ:
+        flask_app.config['JWT_SECRET_KEY'] = os.environ['JWT_SECRET_KEY']
+
+    # Init jwt manager
     jwt = JWTManager(app)
+
+    # Init mongoengine
     db = MongoEngine(app)
 
     return app
