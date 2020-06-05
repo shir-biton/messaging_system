@@ -25,10 +25,10 @@ def get_flask_app(config: dict = None):
     app.config.update(config)
 
     if "MONGODB_URI" in os.environ:
-        flask_app.config["MONGODB_SETTINGS"] = {"host": os.environ["MONGODB_URI"], "retryWrites": False}
+        app.config["MONGODB_SETTINGS"] = {"host": os.environ["MONGODB_URI"], "retryWrites": False}
 
     if "JWT_SECRET_KEY" in os.environ:
-        flask_app.config["JWT_SECRET_KEY"] = os.environ["JWT_SECRET_KEY"]
+        app.config["JWT_SECRET_KEY"] = os.environ["JWT_SECRET_KEY"]
 
     # Init jwt manager
     jwt = JWTManager(app)
