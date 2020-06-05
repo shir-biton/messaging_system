@@ -56,7 +56,7 @@ def read_message_by_id(id):
     current_user = get_jwt_identity()
 
     try:
-        message_box = MessageBox.objects(associated_users=current_user)
+        message_box = MessageBox.objects(message_id=id, associated_users=current_user)
 
         if not message_box:
             return make_response(jsonify({"error": "Bad Request"}), 400)
