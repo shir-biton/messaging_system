@@ -1,9 +1,11 @@
+import datetime
 from flask import Blueprint, jsonify, make_response, request
-from flask_jwt_extended import jwt_required, create_access_token, get_jwt_identity
+from flask_jwt_extended import jwt_required, create_access_token, create_refresh_token
 
 from models.user import User
 
 user_bp = Blueprint("user_bp", __name__)
+
 
 @user_bp.route("/api/v1/users", methods=["POST"])
 def create_user():
@@ -14,10 +16,13 @@ def create_user():
         user.save()
         return make_response(jsonify(user))
     except Exception as e:
-        return make_response(jsonify({"error": str(e)}))
+        return make_response(jsonify({"error": str(e)}), 500)
 
 @user_bp.route("/api/v1/users/login", methods=["POST"])
 def login():
+    """
+    Validates user credentials. Returns access token and user details or an error message.
+    """
     data = request.get_json()
 
     if not data:
@@ -33,11 +38,7 @@ def login():
     except ValueError:
         return make_response(jsonify({"error": "Could not verify"}), 401)
 
-    access_token = create_access_token(identity=str(user.id))
-    return make_response(jsonify(access_token=access_token), 200)
+    access_token = create_access_token(identity=str(user.id), expires_delta=datetime.timedelta(days=1))
+    refresh_token = create_refresh_token(identity=str(user.id))
 
-@user_bp.route("/api/v1/users/me", methods=["GET"])
-@jwt_required
-def get_user():
-    current_user = get_jwt_identity()
-    return make_response(jsonify(logged_in_as=current_user), 200)
+    return make_response(jsonify(access_token=access_token, refresh_token=refresh_token, user=user), 200)
